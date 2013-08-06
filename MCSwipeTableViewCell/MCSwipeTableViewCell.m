@@ -177,11 +177,19 @@ secondStateIconName:(NSString *)secondIconName
     CGFloat percentage = [self percentageWithOffset:CGRectGetMinX(self.contentView.frame) relativeToWidth:CGRectGetWidth(self.bounds)];
     NSTimeInterval animationDuration = [self animationDurationWithVelocity:velocity];
     _direction = [self directionWithPercentage:percentage];
-
+    MCSwipeGestureDirection offsetDirection = self.contentView.center.x > self.superview.center.x ? MCSwipeGestureDirectionRight : MCSwipeGestureDirectionLeft;
+    
     if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged) {
         _isDragging = YES;
         
-        CGPoint center = {self.contentView.center.x + translation.x, self.contentView.center.y};
+        CGFloat centerX;
+        
+        if (!(offsetDirection & self.allowedDirection)) {
+            centerX = self.contentView.center.x + translation.x / 2;
+        } else {
+            centerX = self.contentView.center.x + translation.x;
+        }
+        CGPoint center = {centerX, self.contentView.center.y};
         [self.contentView setCenter:center];
         [self animateWithOffset:CGRectGetMinX(self.contentView.frame)];
         [gesture setTranslation:CGPointZero inView:self];
@@ -212,6 +220,7 @@ secondStateIconName:(NSString *)secondIconName
         }
         CGPoint point = [g velocityInView:self];
         if (fabsf(point.x) > fabsf(point.y) ) {
+            return [self directionIsAllowedByVelocity:point];
             if (point.x > 0 && (_allowedDirection & MCSwipeGestureDirectionRight)) {
                 return YES;
             }
@@ -537,6 +546,12 @@ secondStateIconName:(NSString *)secondIconName
     [self setSecondColor:secondColor];
     [self setThirdColor:thirdColor];
     [self setFourthColor:fourthColor];
+}
+
+#pragma mark - Private Method
+
+- (BOOL)directionIsAllowedByVelocity:(CGPoint)point {
+    return (point.x > 0 && (self.allowedDirection & MCSwipeGestureDirectionRight)) || ((point.x < 0) && self.allowedDirection & MCSwipeGestureDirectionLeft);
 }
 
 @end
