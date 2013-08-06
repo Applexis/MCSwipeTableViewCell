@@ -145,6 +145,9 @@ secondStateIconName:(NSString *)secondIconName
     
     // By default the cells are draggable
     _shouldDrag = YES;
+    
+    // By defaul allow both direction.
+    _allowedDirection = MCSwipeGestureDirectionLeft | MCSwipeGestureDirectionRight;
 }
 
 #pragma mark - Prepare reuse
@@ -205,7 +208,13 @@ secondStateIconName:(NSString *)secondIconName
         UIPanGestureRecognizer *g = (UIPanGestureRecognizer *)gestureRecognizer;
         CGPoint point = [g velocityInView:self];
         if (fabsf(point.x) > fabsf(point.y) ) {
-            return YES;
+            if (point.x > 0 && (_allowedDirection & MCSwipeGestureDirectionRight)) {
+                return YES;
+            }
+            if (point.x < 0 && (_allowedDirection & MCSwipeGestureDirectionLeft)) {
+                return YES;
+            }
+            //return YES;
         }
     }
     return NO;

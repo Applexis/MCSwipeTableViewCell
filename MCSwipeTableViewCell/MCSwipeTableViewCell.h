@@ -27,6 +27,11 @@ typedef NS_ENUM(NSUInteger, MCSwipeTableViewCellMode){
     MCSwipeTableViewCellModeSwitch
 };
 
+typedef NS_OPTIONS(NSUInteger, MCSwipeGestureDirection) {
+    MCSwipeGestureDirectionLeft = 1 << 0,
+    MCSwipeGestureDirectionRight = 1 << 1,
+};
+
 @protocol MCSwipeTableViewCellDelegate <NSObject>
 
 @optional
@@ -52,6 +57,7 @@ typedef NS_ENUM(NSUInteger, MCSwipeTableViewCellMode){
 @property(nonatomic, assign) BOOL isDragging;
 @property(nonatomic, assign) BOOL shouldDrag;
 
+@property(nonatomic, assign) MCSwipeGestureDirection allowedDirection;
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
  firstStateIconName:(NSString *)firstIconName
