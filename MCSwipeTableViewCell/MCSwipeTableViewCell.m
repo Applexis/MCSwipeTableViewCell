@@ -58,7 +58,6 @@ static NSTimeInterval const kMCDurationHightLimit = 0.1; // Highest duration whe
 @property(nonatomic, assign) MCSwipeTableViewCellDirection direction;
 @property(nonatomic, assign) CGFloat currentPercentage;
 
-@property(nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
 @property(nonatomic, strong) UIImageView *slidingImageView;
 @property(nonatomic, strong) NSString *currentImageName;
 @property(nonatomic, strong) UIView *colorIndicatorView;
@@ -206,6 +205,11 @@ secondStateIconName:(NSString *)secondIconName
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if ([gestureRecognizer class] == [UIPanGestureRecognizer class]) {
         UIPanGestureRecognizer *g = (UIPanGestureRecognizer *)gestureRecognizer;
+        if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:panGestureShouldBegin:)]) {
+            if (![self.swipeCellDelegate swipeTableViewCell:self panGestureShouldBegin:g]) {
+                return NO;
+            }
+        }
         CGPoint point = [g velocityInView:self];
         if (fabsf(point.x) > fabsf(point.y) ) {
             if (point.x > 0 && (_allowedDirection & MCSwipeGestureDirectionRight)) {
@@ -508,8 +512,8 @@ secondStateIconName:(NSString *)secondIconName
     MCSwipeTableViewCellState state = [self stateWithPercentage:_currentPercentage];
 
     if (state != MCSwipeTableViewCellStateNone) {
-        if (_delegate != nil && [_delegate respondsToSelector:@selector(swipeTableViewCell:didTriggerState:withMode:)]) {
-            [_delegate swipeTableViewCell:self didTriggerState:state withMode:_mode];
+        if (_swipeCellDelegate != nil && [_swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didTriggerState:withMode:)]) {
+            [_swipeCellDelegate swipeTableViewCell:self didTriggerState:state withMode:_mode];
         }
     }
 }

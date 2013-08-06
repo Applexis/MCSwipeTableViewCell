@@ -36,12 +36,13 @@ typedef NS_OPTIONS(NSUInteger, MCSwipeGestureDirection) {
 
 @optional
 - (void)swipeTableViewCell:(MCSwipeTableViewCell *)cell didTriggerState:(MCSwipeTableViewCellState)state withMode:(MCSwipeTableViewCellMode)mode;
+- (BOOL)swipeTableViewCell:(MCSwipeTableViewCell *)cell panGestureShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer;
 
 @end
 
 @interface MCSwipeTableViewCell : UITableViewCell
 
-@property(nonatomic, assign) id <MCSwipeTableViewCellDelegate> delegate;
+@property(nonatomic, assign) id <MCSwipeTableViewCellDelegate> swipeCellDelegate;
 
 @property(nonatomic, copy) NSString *firstIconName;
 @property(nonatomic, copy) NSString *secondIconName;
@@ -57,7 +58,9 @@ typedef NS_OPTIONS(NSUInteger, MCSwipeGestureDirection) {
 @property(nonatomic, assign) BOOL isDragging;
 @property(nonatomic, assign) BOOL shouldDrag;
 
+@property(nonatomic, strong, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 @property(nonatomic, assign) MCSwipeGestureDirection allowedDirection;
+
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
  firstStateIconName:(NSString *)firstIconName
