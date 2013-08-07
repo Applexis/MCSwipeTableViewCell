@@ -35,6 +35,9 @@ typedef NS_OPTIONS(NSUInteger, MCSwipeGestureDirection) {
 @protocol MCSwipeTableViewCellDelegate <NSObject>
 
 @optional
+- (void)swipeTableViewCell:(MCSwipeTableViewCell *)cell didStartPanning:(id)sender;
+- (void)swipeTableViewCell:(MCSwipeTableViewCell *)cell willEndPanning:(id)sender;
+- (void)swipeTableViewCell:(MCSwipeTableViewCell *)cell didEndPanning:(id)sender;
 - (void)swipeTableViewCell:(MCSwipeTableViewCell *)cell didTriggerState:(MCSwipeTableViewCellState)state withMode:(MCSwipeTableViewCellMode)mode;
 - (BOOL)swipeTableViewCell:(MCSwipeTableViewCell *)cell panGestureShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer;
 

@@ -170,7 +170,6 @@ secondStateIconName:(NSString *)secondIconName
 #pragma mark - Handle Gestures
 
 - (void)handlePanGestureRecognizer:(UIPanGestureRecognizer *)gesture {
-    
     // The user do not want you to be dragged!
     if (!_shouldDrag) return;
     
@@ -185,6 +184,9 @@ secondStateIconName:(NSString *)secondIconName
     if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged) {
         _isDragging = YES;
         
+        if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didStartPanning:)]) {
+            [self.swipeCellDelegate swipeTableViewCell:self didStartPanning:gesture];
+        }
         CGFloat centerX;
         
         if (!(offsetDirection & self.allowedDirection)) {
@@ -523,10 +525,19 @@ secondStateIconName:(NSString *)secondIconName
 - (void)notifyDelegate {
     MCSwipeTableViewCellState state = [self stateWithPercentage:_currentPercentage];
 
+    if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:willEndPanning:)]) {
+        [self.swipeCellDelegate swipeTableViewCell:self willEndPanning:nil];
+    }
+
     if (state != MCSwipeTableViewCellStateNone) {
+
         if (_swipeCellDelegate != nil && [_swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didTriggerState:withMode:)]) {
             [_swipeCellDelegate swipeTableViewCell:self didTriggerState:state withMode:_mode];
         }
+    }
+    
+    if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didEndPanning:)]) {
+        [self.swipeCellDelegate swipeTableViewCell:self didEndPanning:nil];
     }
 }
 
