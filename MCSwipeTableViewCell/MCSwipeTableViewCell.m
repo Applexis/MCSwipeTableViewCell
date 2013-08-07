@@ -147,6 +147,9 @@ secondStateIconName:(NSString *)secondIconName
     
     // By defaul allow both direction.
     _allowedDirection = MCSwipeGestureDirectionLeft | MCSwipeGestureDirectionRight;
+    
+    // By default, do not move background view.
+    _backgroundNeedsMove = NO;
 }
 
 #pragma mark - Prepare reuse
@@ -190,7 +193,7 @@ secondStateIconName:(NSString *)secondIconName
             centerX = self.contentView.center.x + translation.x;
         }
         CGPoint center = {centerX, self.contentView.center.y};
-        [self.contentView setCenter:center];
+        [self setContentCenter:center];
         [self animateWithOffset:CGRectGetMinX(self.contentView.frame)];
         [gesture setTranslation:CGPointZero inView:self];
     }
@@ -477,7 +480,7 @@ secondStateIconName:(NSString *)secondIconName
                           delay:0.0
                         options:(UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction)
                      animations:^{
-                         [self.contentView setFrame:rect];
+                         [self setContentFrame:rect];
                          [_slidingImageView setAlpha:0];
                          [self slideImageWithPercentage:percentage imageName:_currentImageName isDragging:NO];
                      }
@@ -495,7 +498,7 @@ secondStateIconName:(NSString *)secondIconName
                      animations:^{
                          CGRect frame = self.contentView.frame;
                          frame.origin.x = -bounceDistance;
-                         [self.contentView setFrame:frame];
+                         [self setContentFrame:frame];
                          [_slidingImageView setAlpha:0.0];
                          [self slideImageWithPercentage:0 imageName:_currentImageName isDragging:NO];
                      }
@@ -507,7 +510,7 @@ secondStateIconName:(NSString *)secondIconName
                                           animations:^{
                                               CGRect frame = self.contentView.frame;
                                               frame.origin.x = 0;
-                                              [self.contentView setFrame:frame];
+                                              [self setContentFrame:frame];
                                           }
                                           completion:^(BOOL finished2) {
                                               [self notifyDelegate];
@@ -552,6 +555,26 @@ secondStateIconName:(NSString *)secondIconName
 
 - (BOOL)directionIsAllowedByVelocity:(CGPoint)point {
     return (point.x > 0 && (self.allowedDirection & MCSwipeGestureDirectionRight)) || ((point.x < 0) && self.allowedDirection & MCSwipeGestureDirectionLeft);
+}
+
+
+- (void)setContentCenter:(CGPoint)center {
+    [self.contentView setCenter:center];
+    
+    if (_backgroundNeedsMove) {
+        [self.backgroundView setCenter:center];
+        [self.selectedBackgroundView setCenter:center];
+    }
+}
+
+
+- (void)setContentFrame:(CGRect)frame {
+    [self.contentView setFrame:frame];
+    
+    if (self.backgroundNeedsMove) {
+        [self.backgroundView setFrame:frame];
+        [self.selectedBackgroundView setFrame:frame];
+    }
 }
 
 @end

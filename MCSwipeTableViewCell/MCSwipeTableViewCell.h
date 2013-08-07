@@ -60,6 +60,7 @@ typedef NS_OPTIONS(NSUInteger, MCSwipeGestureDirection) {
 
 @property(nonatomic, strong, readonly) UIPanGestureRecognizer *panGestureRecognizer;
 @property(nonatomic, assign) MCSwipeGestureDirection allowedDirection;
+@property(nonatomic, assign) BOOL backgroundNeedsMove;
 
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
