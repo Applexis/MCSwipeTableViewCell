@@ -142,6 +142,7 @@ secondStateIconName:(NSString *)secondIconName
         for (UIView *subview in self.subviews) {
             if ([NSStringFromClass([subview class]) isEqualToString:@"UITableViewCellScrollView"]) { // for iOS7 && SDK7
                 [subview insertSubview:_colorIndicatorView belowSubview:self.contentView];
+                break;
             }
         }
     } else {
