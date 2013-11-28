@@ -130,8 +130,24 @@ secondStateIconName:(NSString *)secondIconName
     _colorIndicatorView = [[UIView alloc] initWithFrame:self.bounds];
     [_colorIndicatorView setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
     [_colorIndicatorView setBackgroundColor:[UIColor clearColor]];
-    [self insertSubview:_colorIndicatorView belowSubview:self.contentView];
-
+ 
+    BOOL sdk7_with_ios7 = NO;
+#if defined(__IPHONE_7_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
+    // SDK7 && iOS7
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+        sdk7_with_ios7 = YES;
+    }
+#endif
+    if (sdk7_with_ios7) {
+        for (UIView *subview in self.subviews) {
+            if ([NSStringFromClass([subview class]) isEqualToString:@"UITableViewCellScrollView"]) { // for iOS7 && SDK7
+                [subview insertSubview:_colorIndicatorView belowSubview:self.contentView];
+            }
+        }
+    } else {
+        [self insertSubview:_colorIndicatorView belowSubview:self.contentView];
+    }
+    
     _slidingImageView = [[UIImageView alloc] init];
     [_slidingImageView setContentMode:UIViewContentModeCenter];
     [_colorIndicatorView addSubview:_slidingImageView];
