@@ -546,13 +546,10 @@ secondStateIconName:(NSString *)secondIconName
         [self.swipeCellDelegate swipeTableViewCell:self willEndPanning:nil];
     }
 
-    if (state != MCSwipeTableViewCellStateNone) {
-
-        if (_swipeCellDelegate != nil && [_swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didTriggerState:withMode:)]) {
-            [_swipeCellDelegate swipeTableViewCell:self didTriggerState:state withMode:_mode];
-        }
+    if (_swipeCellDelegate != nil && [_swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didTriggerState:withMode:)]) {
+        [_swipeCellDelegate swipeTableViewCell:self didTriggerState:state withMode:_mode];
     }
-    
+
     if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didEndPanning:)]) {
         [self.swipeCellDelegate swipeTableViewCell:self didEndPanning:nil];
     }
