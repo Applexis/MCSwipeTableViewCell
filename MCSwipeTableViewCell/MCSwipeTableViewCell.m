@@ -201,8 +201,10 @@ secondStateIconName:(NSString *)secondIconName
     if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged) {
         _isDragging = YES;
         
-        if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didStartPanning:)]) {
-            [self.swipeCellDelegate swipeTableViewCell:self didStartPanning:gesture];
+        if (state == UIGestureRecognizerStateBegan) {
+            if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didStartPanning:)]) {
+                [self.swipeCellDelegate swipeTableViewCell:self didStartPanning:gesture];
+            }
         }
         CGFloat centerX;
         
