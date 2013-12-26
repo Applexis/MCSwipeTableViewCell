@@ -62,6 +62,8 @@ static NSTimeInterval const kMCDurationHightLimit = 0.1; // Highest duration whe
 @property(nonatomic, strong) NSString *currentImageName;
 @property(nonatomic, strong) UIView *colorIndicatorView;
 
+@property(nonatomic, assign) CGRect originContentFrame;
+
 @end
 
 @implementation MCSwipeTableViewCell
@@ -193,7 +195,7 @@ secondStateIconName:(NSString *)secondIconName
     UIGestureRecognizerState state = [gesture state];
     CGPoint translation = [gesture translationInView:self];
     CGPoint velocity = [gesture velocityInView:self];
-    CGFloat percentage = [self percentageWithOffset:CGRectGetMinX(self.contentView.frame) relativeToWidth:CGRectGetWidth(self.bounds)];
+    CGFloat percentage = [self percentageWithOffset:(self.contentView.frame.origin.x - self.originContentFrame.origin.x) relativeToWidth:CGRectGetWidth(self.bounds)];
     NSTimeInterval animationDuration = [self animationDurationWithVelocity:velocity];
     _direction = [self directionWithPercentage:percentage];
     MCSwipeGestureDirection offsetDirection = self.contentView.center.x > self.superview.center.x ? MCSwipeGestureDirectionRight : MCSwipeGestureDirectionLeft;
@@ -202,6 +204,7 @@ secondStateIconName:(NSString *)secondIconName
         _isDragging = YES;
         
         if (state == UIGestureRecognizerStateBegan) {
+            self.originContentFrame = self.contentView.frame;
             if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:didStartPanning:)]) {
                 [self.swipeCellDelegate swipeTableViewCell:self didStartPanning:gesture];
             }
@@ -518,7 +521,7 @@ secondStateIconName:(NSString *)secondIconName
                         options:(UIViewAnimationOptionCurveEaseOut)
                      animations:^{
                          CGRect frame = self.contentView.frame;
-                         frame.origin.x = -bounceDistance;
+                         frame.origin.x = self.originContentFrame.origin.x - bounceDistance;
                          [self setContentFrame:frame];
                          [_slidingImageView setAlpha:0.0];
                          [self slideImageWithPercentage:0 imageName:_currentImageName isDragging:NO];
@@ -530,7 +533,7 @@ secondStateIconName:(NSString *)secondIconName
                                              options:UIViewAnimationOptionCurveEaseIn
                                           animations:^{
                                               CGRect frame = self.contentView.frame;
-                                              frame.origin.x = 0;
+                                              frame.origin.x = self.originContentFrame.origin.x;
                                               [self setContentFrame:frame];
                                           }
                                           completion:^(BOOL finished2) {
