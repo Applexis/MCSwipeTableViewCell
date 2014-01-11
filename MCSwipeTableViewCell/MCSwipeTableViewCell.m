@@ -238,6 +238,9 @@ secondStateIconName:(NSString *)secondIconName
 #pragma mark - UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if (!self.shouldDrag) {
+        return NO;
+    }
     if ([gestureRecognizer class] == [UIPanGestureRecognizer class]) {
         UIPanGestureRecognizer *g = (UIPanGestureRecognizer *)gestureRecognizer;
         if ([self.swipeCellDelegate respondsToSelector:@selector(swipeTableViewCell:panGestureShouldBegin:)]) {
