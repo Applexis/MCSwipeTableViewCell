@@ -16,6 +16,8 @@ static NSTimeInterval const kMCBounceDuration2 = 0.1; // Duration of the second 
 static NSTimeInterval const kMCDurationLowLimit = 0.25; // Lowest duration when swipping the cell because we try to simulate velocity
 static NSTimeInterval const kMCDurationHightLimit = 0.1; // Highest duration when swipping the cell because we try to simulate velocity
 
+static BOOL sdk7_with_ios7 = NO;
+
 @interface MCSwipeTableViewCell () <UIGestureRecognizerDelegate>
 
 // Init
@@ -133,7 +135,6 @@ secondStateIconName:(NSString *)secondIconName
     [_colorIndicatorView setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
     [_colorIndicatorView setBackgroundColor:[UIColor clearColor]];
  
-    BOOL sdk7_with_ios7 = NO;
 #if defined(__IPHONE_7_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
     // SDK7 && iOS7
     if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
@@ -184,6 +185,18 @@ secondStateIconName:(NSString *)secondIconName
 
     // Before reuse we need to reset it's state
     _shouldDrag = YES;
+    
+    if (sdk7_with_ios7) {
+        // For ios7, should set the scrollView to transparent.
+        // May cause some unknown error if background color is used. But it works now.
+        for (UIView *subview in self.subviews) {
+            if ([NSStringFromClass([subview class]) isEqualToString:@"UITableViewCellScrollView"]) { // for iOS7 && SDK7
+                [subview setAlpha:1];
+                break;
+            }
+        }
+    }
+
 }
 
 #pragma mark - Handle Gestures
@@ -508,6 +521,16 @@ secondStateIconName:(NSString *)secondIconName
                         options:(UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction)
                      animations:^{
                          [self setContentFrame:rect];
+                         if (sdk7_with_ios7) {
+                             // For ios7, should set the scrollView to transparent.
+                             // May cause some unknown error if background color is used. But it works now.
+                             for (UIView *subview in self.subviews) {
+                                 if ([NSStringFromClass([subview class]) isEqualToString:@"UITableViewCellScrollView"]) { // for iOS7 && SDK7
+                                     [subview setAlpha:0];
+                                     break;
+                                 }
+                             }
+                         }
                          [_slidingImageView setAlpha:0];
                          [self slideImageWithPercentage:percentage imageName:_currentImageName isDragging:NO];
                      }
